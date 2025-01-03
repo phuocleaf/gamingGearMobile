@@ -14,7 +14,10 @@ import com.phuocleaf.gaminggearmobile.adapter.CartAdapter
 import com.phuocleaf.gaminggearmobile.databinding.FragmentCartBinding
 import com.phuocleaf.gaminggearmobile.model.Cart
 import com.phuocleaf.gaminggearmobile.onclick.ChangeNumListener
+import com.phuocleaf.gaminggearmobile.ui.ThongTinDatHangActivity
 import io.paperdb.Paper
+import java.text.NumberFormat
+import java.util.Locale
 import kotlin.math.min
 
 
@@ -50,7 +53,10 @@ class CartFragment : Fragment() {
         for (i in cartList){
             total += i.sanPham.salePrice.toInt() * i.amount
         }
-        binding.txtmoney.text = total.toString()
+
+        var numberFormat = NumberFormat.getInstance(Locale("vi", "VN"))
+        var formattedTotal = numberFormat.format(total)
+        binding.txtmoney.text = formattedTotal.toString()
         total = 0
         cartAdapter = CartAdapter(object : ChangeNumListener {
             override fun changeNum(position: Int, isAdd: Boolean) {
@@ -76,7 +82,10 @@ class CartFragment : Fragment() {
                             for (i in cartList){
                                 total += i.sanPham.salePrice.toInt() * i.amount
                             }
-                            binding.txtmoney.text = total.toString()
+
+
+                            formattedTotal = numberFormat.format(total)
+                            binding.txtmoney.text = formattedTotal.toString()
                             total = 0
                             Toast.makeText(context, "Đã xoá sản phẩm", Toast.LENGTH_SHORT).show()
                         }
@@ -94,7 +103,8 @@ class CartFragment : Fragment() {
                 for (i in cartList){
                     total += i.sanPham.salePrice.toInt() * i.amount
                 }
-                binding.txtmoney.text = total.toString()
+                formattedTotal = numberFormat.format(total)
+                binding.txtmoney.text = formattedTotal.toString()
                 total = 0
             }
 
@@ -107,13 +117,18 @@ class CartFragment : Fragment() {
         )
 
         binding.btnbuy.setOnClickListener {
-//            if (cartList.isEmpty()){
-//                Toast.makeText(context, "Giỏ hàng của bạn đang trống", Toast.LENGTH_SHORT).show()
-//            } else {
-//                val intent = Intent(context, DeliveryInformationActivity::class.java)
-//                intent.putExtra("total", binding.txtmoney.text.toString().toInt())
-//                startActivity(intent)
-//            }
+            if (cartList.isEmpty()){
+                Toast.makeText(context, "Giỏ hàng của bạn đang trống", Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(context, ThongTinDatHangActivity::class.java)
+                val numberWithoutComma = binding.txtmoney.text.toString().replace(".", "") // Loại bỏ dấu chấm
+                val number = numberWithoutComma.toInt() // Chuyển đổi thành số
+
+                intent.putExtra("total", number)
+                //write total to paper
+                Paper.book().write("total", number)
+                startActivity(intent)
+            }
         }
 
     }

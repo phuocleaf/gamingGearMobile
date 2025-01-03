@@ -10,6 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import com.phuocleaf.gaminggearmobile.R
 import com.phuocleaf.gaminggearmobile.databinding.FragmentProfileBinding
 import com.phuocleaf.gaminggearmobile.ui.DangNhapActivity
+import com.phuocleaf.gaminggearmobile.ui.ThongTinCaNhanActivity
+import com.phuocleaf.gaminggearmobile.ui.ThongTinDonHangActivity
 import io.paperdb.Paper
 
 
@@ -71,15 +73,15 @@ class ProfileFragment : Fragment() {
         }
 
 
-//        binding.llOrderProcessing.setOnClickListener {
-//            val intent = Intent(requireContext(), ReviewOrdersActivity::class.java)
-//            startActivity(intent)
-//        }
+        binding.llOrderProcessing.setOnClickListener {
+            val intent = Intent(requireContext(), ThongTinDonHangActivity::class.java)
+            startActivity(intent)
+        }
 
-//        binding.lluserinfomation.setOnClickListener {
-//            val intent = Intent(requireContext(), UserInfoActivity::class.java)
-//            startActivity(intent)
-//        }
+        binding.lluserinfomation.setOnClickListener {
+            val intent = Intent(requireContext(), ThongTinCaNhanActivity::class.java)
+            startActivity(intent)
+        }
     }
 
 }

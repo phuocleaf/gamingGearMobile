@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.phuocleaf.gaminggearmobile.R
@@ -98,8 +99,52 @@ class HomeFragment : Fragment() {
             adapter = sanPhamAdapter
             layoutManager = LinearLayoutManager(context)
         }
+
+
+        //
+        //search with androidx.appcompat.widget.SearchView
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    filterSanPham(it) // Lọc sản phẩm dựa trên query
+                }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                newText?.let {
+                    filterSanPham(it) // Lọc sản phẩm khi query thay đổi
+                }
+                return true
+            }
+        })
+        //
     }
 
+
+    // Lọc sản phẩm dựa trên query
+    private fun filterSanPham(query: String) {
+        // Lấy danh sách gốc từ ViewModel
+        val originalList = homeViewModel.observerSanPhamLiveData().value ?: listOf()
+
+        // Kiểm tra nếu query rỗng, hiển thị toàn bộ danh sách
+        if (query.isEmpty()) {
+            sanPhamAdapter.setDataSanPhamList(originalList as ArrayList<SanPhamItem>)
+            return
+        }
+
+        // Lọc danh sách theo query
+        val filteredList = originalList.filter { sanPhamItem ->
+            sanPhamItem.name.contains(query, ignoreCase = true) || // Lọc theo tên sản phẩm
+                    sanPhamItem.phanloai.any { it.name.contains(query, ignoreCase = true) } // Lọc theo danh mục
+        }
+
+        // Cập nhật danh sách đã lọc vào Adapter
+        sanPhamAdapter.setDataSanPhamList(filteredList as ArrayList<SanPhamItem>)
+    }
+
+
+    //
     private fun observerLiveData() {
         homeViewModel.observerPhanLoaiLiveData().observe(viewLifecycleOwner) { PhanLoai ->
             phanLoaiAdapter.setDataPhanLoaiList(PhanLoai as ArrayList<PhanLoaiItem>)
